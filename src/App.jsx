@@ -5,6 +5,8 @@ import Dashboard from './components/Dashboard';
 import Calculator from './components/Calculator';
 import ActionableTips from './components/ActionableTips';
 import ProgressTracker from './components/ProgressTracker';
+import Flashcards from './components/Flashcards';
+import ImageScanner from './components/ImageScanner';
 import { Leaf } from 'lucide-react';
 
 function App() {
@@ -30,7 +32,7 @@ function App() {
           <Leaf size={32} color="var(--primary-green)" />
           <h1 style={{ marginBottom: 0, fontSize: '2rem' }}>EcoFootprint Tracker</h1>
         </div>
-        <nav className="flex gap-4">
+        <nav className="flex gap-4" style={{ flexWrap: 'wrap' }}>
           <button 
             className={activeTab === 'dashboard' ? 'btn-primary' : 'btn-outline'} 
             onClick={() => setActiveTab('dashboard')}
@@ -42,6 +44,18 @@ function App() {
             onClick={() => setActiveTab('calculator')}
           >
             Calculator
+          </button>
+          <button 
+            className={activeTab === 'learn' ? 'btn-primary' : 'btn-outline'} 
+            onClick={() => setActiveTab('learn')}
+          >
+            Learn
+          </button>
+          <button 
+            className={activeTab === 'scan' ? 'btn-primary' : 'btn-outline'} 
+            onClick={() => setActiveTab('scan')}
+          >
+            Scan Image
           </button>
         </nav>
       </header>
@@ -64,6 +78,18 @@ function App() {
              <div className="w-full" style={{maxWidth: '800px'}}>
                <Calculator data={data} updateData={updateData} onComplete={() => setActiveTab('dashboard')} />
              </div>
+          </div>
+        )}
+
+        {activeTab === 'learn' && (
+          <div className="md:col-span-3 flex justify-center">
+             <Flashcards />
+          </div>
+        )}
+
+        {activeTab === 'scan' && (
+          <div className="md:col-span-3 flex justify-center">
+             <ImageScanner data={data} updateData={updateData} />
           </div>
         )}
       </main>
