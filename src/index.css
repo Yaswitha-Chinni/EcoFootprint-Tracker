@@ -191,21 +191,28 @@ p {
 .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
 @media (max-width: 768px) {
   .md\:grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .md\:col-span-2 { grid-column: span 1 / span 1; }
+  .md\:col-span-3 { grid-column: span 1 / span 1; }
   #root { padding: 1rem; }
 }
+
 @media (min-width: 769px) {
   .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
   .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\:col-span-2 { grid-column: span 2 / span 2; }
+  .md\:col-span-3 { grid-column: span 3 / span 3; }
 }
+
 /* --- NEW FEATURES CSS --- */
 
 /* Flashcards 3D Flip */
 .flashcard-container {
   perspective: 1000px;
   width: 100%;
-  height: 250px;
+  height: 350px;
   cursor: pointer;
 }
 
@@ -233,7 +240,7 @@ p {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 1.5rem;
   box-shadow: var(--glass-shadow);
 }
 
@@ -299,5 +306,3 @@ p {
   90% { opacity: 1; }
   100% { top: 100%; opacity: 0; }
 }
-
-/* ------------------------ */
