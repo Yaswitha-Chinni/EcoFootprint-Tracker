@@ -68,6 +68,16 @@ const Dashboard = ({ data, updateData }) => {
 
   return (
     <div className="flex flex-col gap-6">
+      <section className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(82, 183, 136, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%)' }} aria-label="Our Mission and Privacy Guarantee">
+        <h2 style={{ color: 'var(--primary-green)', marginBottom: '0.5rem' }}>Our Mission</h2>
+        <p style={{ margin: 0, fontWeight: 500 }}>
+          Welcome to EcoFootprint Tracker! We help individuals <strong>understand, track, and reduce their carbon footprint through simple actions and personalized insights.</strong>
+        </p>
+        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          🔒 <strong>Privacy Guarantee:</strong> All of your carbon footprint data and images are processed and stored strictly locally on your device. We do not transmit or store your personal data on external servers.
+        </p>
+      </section>
+
       <article className="glass-card flex justify-between items-center" aria-label="Footprint Summary">
         <div>
           <h2>Your Weekly Carbon Footprint</h2>
