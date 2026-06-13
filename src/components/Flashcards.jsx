@@ -34,9 +34,17 @@ const FLASHCARD_DATA = [
   }
 ];
 
+/**
+ * Flashcards Component displaying interactive 3D flip cards for educational purposes.
+ * @returns {JSX.Element} The rendered Flashcards component
+ */
 const Flashcards = () => {
   const [flippedCards, setFlippedCards] = useState({});
 
+  /**
+   * Toggles the flipped state of a specific flashcard.
+   * @param {number} id - The ID of the flashcard to flip
+   */
   const handleFlip = (id) => {
     setFlippedCards(prev => ({
       ...prev,
@@ -44,42 +52,63 @@ const Flashcards = () => {
     }));
   };
 
+  /**
+   * Keyboard accessibility handler for flipping cards.
+   * @param {React.KeyboardEvent} e - The keyboard event
+   * @param {number} id - The ID of the flashcard
+   */
+  const handleKeyDown = (e, id) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleFlip(id);
+    }
+  };
+
   return (
-    <div className="animate-fade-in flex flex-col gap-6 w-full max-w-4xl mx-auto">
-      <div className="glass-card flex items-center gap-4">
+    <article className="animate-fade-in flex flex-col gap-6 w-full max-w-4xl mx-auto" aria-label="Educational Flashcards">
+      <header className="glass-card flex items-center gap-4">
         <div style={{ padding: '12px', background: 'var(--light-blue)', borderRadius: '50%', color: 'var(--accent-blue)' }}>
-          <BookOpen size={32} />
+          <BookOpen size={32} aria-hidden="true" />
         </div>
         <div>
           <h2 style={{ marginBottom: '0.2rem' }}>Interactive Learning</h2>
           <p style={{ margin: 0 }}>Click the cards to flip them and learn shocking facts about your environmental impact.</p>
         </div>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {FLASHCARD_DATA.map((card) => (
-          <div 
-            key={card.id} 
-            className={`flashcard-container ${flippedCards[card.id] ? 'flipped' : ''}`}
-            onClick={() => handleFlip(card.id)}
-          >
-            <div className="flashcard-inner">
-              <div className="flashcard-front">
-                <h3 style={{ color: '#fff', fontSize: '1.4rem' }}>{card.front}</h3>
-                <div style={{ marginTop: '1.5rem', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <RefreshCcw size={16} /> Tap to flip
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Flashcard Grid">
+        {FLASHCARD_DATA.map((card) => {
+          const isFlipped = !!flippedCards[card.id];
+          return (
+            <div 
+              key={card.id} 
+              className={`flashcard-container ${isFlipped ? 'flipped' : ''}`}
+              onClick={() => handleFlip(card.id)}
+              onKeyDown={(e) => handleKeyDown(e, card.id)}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isFlipped}
+              aria-expanded={isFlipped}
+              aria-label={`Flashcard: ${card.front}. Press Enter or Space to flip.`}
+            >
+              <div className="flashcard-inner">
+                <div className="flashcard-front" aria-hidden={isFlipped}>
+                  <h3 style={{ color: '#fff', fontSize: '1.4rem' }}>{card.front}</h3>
+                  <div style={{ marginTop: '1.5rem', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <RefreshCcw size={16} aria-hidden="true" /> Tap to flip
+                  </div>
+                </div>
+                <div className="flashcard-back" aria-hidden={!isFlipped}>
+                  <p style={{ fontSize: '1.1rem', color: 'var(--text-main)', margin: 0, fontWeight: 500 }}>
+                    {card.back}
+                  </p>
                 </div>
               </div>
-              <div className="flashcard-back">
-                <p style={{ fontSize: '1.1rem', color: 'var(--text-main)', margin: 0, fontWeight: 500 }}>
-                  {card.back}
-                </p>
-              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          );
+        })}
+      </section>
+    </article>
   );
 };
 

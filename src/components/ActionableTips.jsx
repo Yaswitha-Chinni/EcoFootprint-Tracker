@@ -1,6 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Lightbulb } from 'lucide-react';
 
+/**
+ * ActionableTips component provides personalized recommendations to the user based on their highest carbon emission category.
+ * @param {Object} props - Component props
+ * @param {Object} props.data - Global state containing footprint breakdown
+ * @returns {JSX.Element} Rendered actionable tips component
+ */
 const ActionableTips = ({ data }) => {
   // Find highest emission category
   const categories = Object.entries(data.footprint);
@@ -33,24 +40,38 @@ const ActionableTips = ({ data }) => {
   const currentTips = tips[highestCategory];
 
   return (
-    <div className="glass-card">
-      <div className="flex items-center gap-3 mb-4">
-        <Lightbulb color="#e0a800" size={24} />
+    <article className="glass-card" aria-label="Personalized Actionable Tips">
+      <header className="flex items-center gap-3 mb-4">
+        <Lightbulb color="#e0a800" size={24} aria-hidden="true" />
         <h3 style={{ marginBottom: 0 }}>Top Recommendations</h3>
-      </div>
+      </header>
       <p style={{ fontSize: '0.9rem' }}>
         Based on your footprint, we suggest focusing on your <strong>{highestCategory}</strong> habits:
       </p>
       
-      <ul style={{ listStyleType: 'none', paddingLeft: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '1rem' }}>
+      <ul 
+        style={{ listStyleType: 'none', paddingLeft: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '1rem' }}
+        aria-label={`Tips for reducing ${highestCategory} emissions`}
+      >
         {currentTips.map((tip, index) => (
           <li key={index} style={{ background: 'rgba(255,255,255,0.5)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--light-green)' }}>
             {tip}
           </li>
         ))}
       </ul>
-    </div>
+    </article>
   );
+};
+
+ActionableTips.propTypes = {
+  data: PropTypes.shape({
+    footprint: PropTypes.shape({
+      transport: PropTypes.number,
+      energy: PropTypes.number,
+      food: PropTypes.number,
+      shopping: PropTypes.number
+    }).isRequired
+  }).isRequired
 };
 
 export default ActionableTips;

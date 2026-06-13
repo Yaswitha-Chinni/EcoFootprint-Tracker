@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Award, CheckCircle, Circle } from 'lucide-react';
 
 const ACTIONS = [
@@ -14,9 +15,20 @@ const BADGES = [
   { id: 'planet-hero', label: 'Planet Hero', desc: 'Completed 20 actions', threshold: 20 },
 ];
 
+/**
+ * ProgressTracker component for tracking daily sustainable actions and achievements.
+ * @param {Object} props - Component props
+ * @param {Object} props.data - Current global state
+ * @param {Function} props.updateData - Global state updater function
+ * @returns {JSX.Element} Rendered ProgressTracker component
+ */
 const ProgressTracker = ({ data, updateData }) => {
   const [justEarned, setJustEarned] = useState(null);
 
+  /**
+   * Toggles the completion status of a daily action.
+   * @param {string} actionId - The ID of the action to toggle
+   */
   const toggleAction = (actionId) => {
     let newCompleted = [...data.completedActions];
     if (newCompleted.includes(actionId)) {
@@ -48,22 +60,38 @@ const ProgressTracker = ({ data, updateData }) => {
     });
   };
 
+  /**
+   * Keyboard support for toggling actions.
+   * @param {React.KeyboardEvent} e - Keyboard event
+   * @param {string} actionId - Action ID
+   */
+  const handleKeyDown = (e, actionId) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleAction(actionId);
+    }
+  };
+
   return (
-    <div className="glass-card">
-      <div className="flex justify-between items-center mb-4">
+    <article className="glass-card" aria-label="Daily Actions and Achievements">
+      <header className="flex justify-between items-center mb-4">
         <h3 style={{ marginBottom: 0 }}>Daily Actions</h3>
-        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }} aria-live="polite">
           {data.completedActions.length} completed
         </span>
-      </div>
+      </header>
 
-      <div className="flex flex-col gap-3 mb-6">
+      <section className="flex flex-col gap-3 mb-6" aria-label="Action list">
         {ACTIONS.map(action => {
           const isDone = data.completedActions.includes(action.id);
           return (
             <div 
               key={action.id}
               onClick={() => toggleAction(action.id)}
+              onKeyDown={(e) => handleKeyDown(e, action.id)}
+              role="checkbox"
+              aria-checked={isDone}
+              tabIndex={0}
               className="flex justify-between items-center"
               style={{
                 padding: '0.8rem',
@@ -74,31 +102,33 @@ const ProgressTracker = ({ data, updateData }) => {
               }}
             >
               <div className="flex items-center gap-3">
-                {isDone ? <CheckCircle color="var(--primary-green)" size={20} /> : <Circle color="#aaa" size={20} />}
+                {isDone ? <CheckCircle color="var(--primary-green)" size={20} aria-hidden="true" /> : <Circle color="#aaa" size={20} aria-hidden="true" />}
                 <span style={{ textDecoration: isDone ? 'line-through' : 'none', color: isDone ? 'var(--text-muted)' : 'var(--text-main)' }}>
                   {action.label}
                 </span>
               </div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: '#fff', padding: '2px 8px', borderRadius: '12px' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: '#fff', padding: '2px 8px', borderRadius: '12px' }} aria-label={`Saves ${action.co2Saved} kilograms of CO2`}>
                 -{action.co2Saved}kg
               </span>
             </div>
           )
         })}
-      </div>
+      </section>
 
-      <div className="mt-2 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+      <section className="mt-2 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }} aria-label="Achievements">
         <h3 className="flex items-center gap-2 mb-3">
-          <Award size={20} color="#f59e0b" /> Achievements
+          <Award size={20} color="#f59e0b" aria-hidden="true" /> Achievements
         </h3>
         
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="list">
           {BADGES.map(badge => {
             const earned = data.badges.includes(badge.id);
             return (
               <div 
                 key={badge.id}
                 title={badge.desc}
+                role="listitem"
+                aria-label={`${badge.label} badge: ${earned ? 'Earned' : 'Locked'}`}
                 style={{
                   padding: '0.5rem 1rem',
                   borderRadius: '20px',
@@ -116,13 +146,21 @@ const ProgressTracker = ({ data, updateData }) => {
         </div>
         
         {justEarned && (
-          <div className="mt-4 p-3 text-center animate-fade-in" style={{ background: '#d1fae5', color: '#065f46', borderRadius: '8px' }}>
+          <div className="mt-4 p-3 text-center animate-fade-in" style={{ background: '#d1fae5', color: '#065f46', borderRadius: '8px' }} role="alert">
             🎉 You earned the <strong>{justEarned}</strong> badge!
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </article>
   );
+};
+
+ProgressTracker.propTypes = {
+  data: PropTypes.shape({
+    completedActions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    badges: PropTypes.arrayOf(PropTypes.string).isRequired
+  }).isRequired,
+  updateData: PropTypes.func.isRequired
 };
 
 export default ProgressTracker;
